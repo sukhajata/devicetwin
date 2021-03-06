@@ -1,0 +1,20 @@
+mockgen -destination=mocks/mocknosqlengine.go -package=mocks github.com/sukhajata/devicetwin.git/pkg/db NoSQLEngine
+
+mockgen -destination=mocks/mocksqlengine.go -package=mocks github.com/sukhajata/devicetwin.git/pkg/db SQLEngine
+
+mockgen -destination=mocks/mockdbclient.go -package=mocks github.com/sukhajata/devicetwin.git/internal/dbclient Client
+
+mockgen -destination=mocks/mockconfighandler.go -package=mocks github.com/sukhajata/devicetwin.git/internal/core ConfigHandler
+
+mockgen -destination=mocks/mockconsistencyservice.go -package=mocks github.com/sukhajata/devicetwin.git/internal/consistency ConsistencyChecker
+
+mockgen -destination=mocks/mockloggerhelper.go -package=mocks github.com/sukhajata/devicetwin.git/pkg/loggerhelper Helper
+
+mockgen -destination=mocks/mockauthclient.go -package=mocks github.com/sukhajata/ppauth AuthServiceClient
+
+mockgen -destination=mocks/mockloggerclient.go -package=mocks github.com/sukhajata/pplogger LoggerServiceClient
+
+mockgen -destination=mocks/mockconnectionclient.go -package=mocks github.com/sukhajata/ppconnection ConnectionServiceClient
+
+
+

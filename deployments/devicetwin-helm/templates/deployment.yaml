@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-service
+  namespace: {{ .Values.tenantNamespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: config-service
+  template:
+    metadata:
+      labels:
+        app: config-service
+        version: v1
+    spec:
+      containers:
+      - name: config-service
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+          {{- toYaml .Values.resources  | nindent 10 }}
+        ports:
+        - containerPort: {{ .Values.service.port }}
+          name: grpc
+        - containerPort: {{ .Values.service.httpPort }}
+          name: http
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: {{ .Values.service.httpPort }}
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 2
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: {{ .Values.service.httpPort }}
+          initialDelaySeconds: 20
+          periodSeconds: 20
+          timeoutSeconds: 2
+        envFrom:
+        - secretRef:
+            name: {{ .Release.Name }}-secret
+     

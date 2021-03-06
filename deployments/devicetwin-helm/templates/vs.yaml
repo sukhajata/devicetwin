@@ -1,0 +1,83 @@
+apiVersion: networking.istio.io/{{ .Values.istioApiVersion }}
+kind: VirtualService
+metadata:
+  name: config-vs
+  namespace: {{ .Values.tenantNamespace }}
+spec:
+  hosts:
+  - config.{{ .Values.tenantName }}.powerpilot.nz
+  #- config-service.{{ .Values.tenantNamespace }}.svc.cluster.local
+  gateways:
+  - {{ .Values.gateway }}
+  #- mesh # applies to all the sidecars in the mesh
+  http:
+  - name: grpc
+    match:
+    - uri: 
+        prefix: "/config"
+    route:
+    - destination:
+        host: config-service
+        port:
+          number: {{ .Values.service.port }}
+    corsPolicy:
+      allowOrigin:
+        - "*"
+      allowOrigins:
+        - regex: "https://*.*.powerpilot.nz/*"     
+        - regex: "http://localhost:3000/*"           
+      allowMethods:
+        - POST
+        - GET
+        - OPTIONS
+        - PUT
+        - DELETE
+      allowHeaders:
+        - grpc-timeout
+        - content-type
+        - keep-alive
+        - user-agent
+        - cache-control
+        - content-type
+        - content-transfer-encoding
+        - authorization
+        - x-accept-content-transfer-encoding
+        - x-accept-response-streaming
+        - x-user-agent
+        - x-grpc-web
+      maxAge: 1728s
+      exposeHeaders:
+        - custom-header-1
+        - grpc-status
+        - grpc-message
+      allowCredentials: true
+  #rest api
+  - name: http
+    route:
+    - destination:
+        host: config-service
+        port:
+          number: {{ .Values.service.httpPort }}    
+    corsPolicy:
+      allowOrigin:
+        - "*"
+      allowOrigins:
+        - regex: "https://*.*.powerpilot.nz/*"     
+        - regex: "http://localhost:3000/*"   
+      allowMethods:
+        - POST
+        - GET
+        - OPTIONS
+        - PUT
+        - DELETE
+      allowHeaders:
+        - content-type
+        - keep-alive
+        - user-agent
+        - cache-control
+        - content-type
+        - content-transfer-encoding
+        - authorization
+        - x-accept-content-transfer-encoding
+        - x-accept-response-streaming
+        - x-user-agent

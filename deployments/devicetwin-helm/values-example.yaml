@@ -1,0 +1,57 @@
+replicaCount: 1
+
+image:
+  repository: devicetwin
+  tag: dev-3071
+  pullPolicy: IfNotPresent
+
+service:
+  port: 9090
+  httpPort: 80
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 250m
+    memory: 512Mi
+
+tenantName: devpower
+tenantNamespace: tenant-devpower
+gateway: istio-system/istio-devpower-ingressgateway
+
+repeatCheckSchedule: "15_30_45"
+
+env:
+  mqttBroker: "ssl://mosquitto:8883"
+  mqttUsername: admin
+  mqttPassword: admin
+  mqttDownlinkTopic: "application/powerpilot/downlink/config"
+  mqttUplinkTopic: "$share/config-service/application/powerpilot/uplink/config/#"
+  mqttConnectionsTopic: "$share/config-service/application/powerpilot/connections"
+
+  couchbaseBucketName: test
+  couchbaseBucketNameShared: shared
+  couchbaseUsername: admin
+  couchbasePassword: admin
+  couchbaseServerAddress: "couchbase.dev.svc"
+  couchbaseAdminUsername: admin
+  couchbaseAdminPassword: "test"
+
+  psqlURL: ""
+
+  dataServiceAddress: "http://postgrest-api:3000"
+  dataToken: "test"
+  connectionsDataViewName: "POWER_BI_CONNECTIONS_DATA"
+  repeatCheckSchedule: "15_30_45"
+
+  minutesRunConsistencyCheck: "1440"
+  configServicePort: "9090"
+  authServiceAddress: "auth-service:9030"
+  loggerServiceAddress: "logger-service:9031"
+  connectionServiceAddress: "connection-service:9010"
+  serviceKey:  "test"
+  rolePowerpilotAdmin: "powerpilot-admin"
+  rolePowerpilotInstaller: "powerpilot-installer"
+  rolePowerpilotSuperuser: "powerpilot-superuser"  

@@ -1,0 +1,176 @@
+package consistency
+
+import (
+	"bytes"
+	"fmt"
+	"github.com/golang/mock/gomock"
+	"powerpilot.visualstudio.com/PowerPilot/_git/configservice.git/db"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+	"powerpilot.visualstudio.com/PowerPilot/_git/configservice.git/dataapi"
+	"github.com/sukhajata/devicetwin.git/mocks"
+	"powerpilot.visualstudio.com/PowerPilot/_git/configservice.git/types"
+	"powerpilot.visualstudio.com/PowerPilot/_git/configservice.git/utility"
+	pb "github.com/sukhajata/ppconfig"
+	"github.com/sukhajata/ppmessage/ppdownlink"
+)
+
+func setup(mockCtrl *gomock.Controller) (*Service, chan *ppdownlink.ConfigDownlinkMessage, *mocks.MockClient) {
+	mockDBClient := mocks.NewMockClient(mockCtrl)
+	mockHTTPClient := mocks.MockHTTPClient{}
+	dataAPIClient := dataapi.NewClient("123", "123", "123", &mockHTTPClient)
+	transmitChan := make(chan *ppdownlink.ConfigDownlinkMessage, 1)
+
+	mockHelper := mocks.NewMockAuthLoggerHelper(mockCtrl)
+	consistencyService := NewService(mockDBClient, dataAPIClient, transmitChan, "5_10_15", mockHelper)
+	return consistencyService, transmitChan, mockDBClient
+}
+
+func Test_ScheduleMessageSend(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	consistencyService, transmitChan, mockDBClient := setup(mockCtrl)
+
+	buf := new(bytes.Buffer)
+	firmware := "1.2.0"
+	buf.Write([]byte(firmware))
+	value := buf.Bytes()
+	index := int32(46)
+	downlink := ppdownlink.ConfigDownlinkMessage{
+		Deviceeui: "123",
+		Slot:      0,
+		Index:     46,
+		Firmware:  firmware,
+		Value:     value,
+	}
+	dlresmin := "6,8"
+	details := types.ConfigFieldDetails{
+		Index: int32(46),
+		Name:  "firmware",
+		Type:  32.0,
+	}
+	field := &pb.ConfigField{
+		Name:        "firmware",
+		Index:       46,
+		Desired:     firmware,
+		Reported:    firmware,
+		FieldType:   "32",
+		Description: "",
+		Default:     "",
+		Min:         "",
+		Max:         "",
+	}
+
+	mockDBClient.EXPECT().GetDLResmin(downlink.Deviceeui).Return(dlresmin, nil).Times(1)
+
+	mockDBClient.EXPECT().GetFieldDetailsByIndex(index, firmware, db.DocTypeConfigSchema).Return(details, nil).Times(1)
+
+	mockDBClient.EXPECT().GetConfigByName(firmware, details, gomock.Any).Return(field, nil).Times(1)
+
+	mockDBClient.EXPECT().GetLatestFirmware(db.DocTypeConfigSchema).Return(firmware, nil).Times(1)
+
+	consistencyService.ScheduleMessageSend("123", &downlink)
+
+	msg := <-transmitChan
+	fmt.Println("Received downlink message")
+
+	receivedValue, err := utility.DecodeFieldValue(details, msg.Value)
+	require.Nil(t, err)
+	require.Equal(t, uint32(46), msg.Index)
+	require.Equal(t, firmware, receivedValue)
+}
+
+func Test_CheckConsistencyForField(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	consistencyService, transmitChan, mockDBClient := setup(mockCtrl)
+	dlresmin := "5,8"
+
+	// request a consistency check for a field with mismatched desired and reported
+	req := pb.Identifier{
+		Identifier: "123",
+	}
+	firmware := "1.2.0"
+	field := pb.ConfigField{
+		Name:     "firmware",
+		Index:    46,
+		Desired:  firmware,
+		Reported: "1.1.4",
+	}
+	fieldDetails := types.ConfigFieldDetails{
+		Index: 46,
+		Name:  "firmware",
+		Type:  32.0,
+	}
+
+	// expect
+	mockDBClient.EXPECT().GetDLResmin(req.Identifier).Return(dlresmin, nil).Times(1)
+	mockDBClient.EXPECT().GetLatestFirmware(db.DocTypeConfigSchema).Return(firmware, nil)
+	mockDBClient.EXPECT().GetFieldDetailsByIndex(field.Index, firmware, db.DocTypeConfigSchema).Return(fieldDetails, nil).Times(1)
+
+	// call
+	consistencyService.CheckConsistencyForField(&field, firmware, &req)
+
+	// expect a downlink to be sent
+	msg := <-transmitChan
+	value, err := utility.DecodeFieldValue(fieldDetails, msg.Value)
+	fmt.Println("Received downlink message")
+	require.Nil(t, err)
+	require.Equal(t, uint32(46), msg.Index)
+	require.Equal(t, "1.1.4", value)
+}
+
+func Test_ScheduleConsistencyCheckForField(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	consistencyService, transmitChan, _ := setup(mockCtrl)
+
+	// schedule a consistency check
+	req := pb.Identifier{
+		Identifier: "123",
+	}
+	fieldDetails := types.ConfigFieldDetails{
+		Index: 46,
+		Name:  "firmware",
+		Type:  32.0,
+	}
+
+	consistencyService.ScheduleConsistencyCheckForField(&req, fieldDetails, "1.1.4", 0)
+
+	// expect a downlink to be sent eventually
+	msg := <-transmitChan
+	fmt.Println("Received downlink message")
+	value, err := utility.DecodeFieldValue(fieldDetails, msg.Value)
+	require.Nil(t, err)
+	require.Equal(t, uint32(46), msg.Index)
+	require.Equal(t, "1.1.4", value)
+}
+
+func Test_ProcessCheckConsistencyRequest(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+	consistencyService, transmitChan, _ := setup(mockCtrl)
+	req := pb.CheckConsistencyRequest{
+		DeviceEUI:  "123",
+		Slot:       0,
+		FieldIndex: 46,
+		NumRetries: 0,
+	}
+
+	consistencyService.ProcessCheckConsistencyRequest(&req)
+
+	msg := <-transmitChan
+
+	fieldDetails := types.ConfigFieldDetails{
+		Index: 46,
+		Name:  "firmware",
+		Type:  32.0,
+	}
+
+	value, err := utility.DecodeFieldValue(fieldDetails, msg.Value)
+	require.Nil(t, err)
+	require.Equal(t, uint32(46), msg.Index)
+	require.Equal(t, "1.1.4", value)
+
+}

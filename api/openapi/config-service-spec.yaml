@@ -1,0 +1,92 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0-oas3
+  title: Device Twin Service
+  description: Service for getting and setting config of IoT devices
+
+servers:
+  - url: https://config.devpower.powerpilot.nz
+    description: Development server
+
+security:
+  - bearerAuth: []
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /set:
+    post:
+      summary: Set a config value
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceEUI:
+                  type: string
+                fieldName:
+                  type: string
+                fieldValue:
+                  type: string
+                slot:
+                  type: integer
+
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+
+        '400':
+          description: Missing parameters
+        '401':
+          description: Invalid token
+        '500':
+          description: Internal server error
+  '/get/{deviceeui}/{name}':
+    get:
+      summary: Get a config value
+      parameters:
+        - in: path
+          name: deviceeui
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: name
+          required: true
+          schema:
+            type: string
+          description: The config field to get
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: The name of the field
+                  desired:
+                    type: string
+                    description: The desired value
+                  reported:
+                    type: string
+                    description: The value last reported by the device
+        '400':
+          description: Missing parameters
+        '401':
+          description: Invalid token
+        '500':
+          description: Internal server error
