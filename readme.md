@@ -7,6 +7,8 @@ The service subscribes to another mqtt topic to receive values of configuration 
 
 A LoRaWAN server such as [chirpstack.io](https://chirpstack.io) may be used to provide an mqtt interface.
 
+The service checks intermittently for consistency between the desired and reported state of each device.
+
 A database is required, currently there is support for [Couchbase](./internal/dbclient/nosql) and [PostgreSQL](./internal/dbclient/sql).
 
 To run on Kubernetes,
