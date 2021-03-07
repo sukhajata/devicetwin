@@ -9,7 +9,7 @@ import (
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 
-	"github.com/sukhajata/devicetwin.git/pkg/loggerhelper"
+	"github.com/sukhajata/devicetwin/pkg/loggerhelper"
 )
 
 // Client represents an mqtt client

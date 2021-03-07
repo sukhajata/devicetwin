@@ -1,7 +1,7 @@
 package errorhelper
 
 import (
-	"github.com/sukhajata/devicetwin.git/pkg/loggerhelper"
+	"github.com/sukhajata/devicetwin/pkg/loggerhelper"
 	"time"
 )
 

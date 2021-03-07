@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"encoding/json"
-	"github.com/sukhajata/devicetwin.git/pkg/loggerhelper"
+	"github.com/sukhajata/devicetwin/pkg/loggerhelper"
 	pb "github.com/sukhajata/ppconnection"
 	"time"
 

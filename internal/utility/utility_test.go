@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/sukhajata/devicetwin.git/internal/types"
+	"github.com/sukhajata/devicetwin/internal/types"
 )
 
 func Test_StringToInterface_String(t *testing.T) {

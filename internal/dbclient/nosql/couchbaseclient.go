@@ -8,10 +8,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/sukhajata/devicetwin.git/internal/types"
-	"github.com/sukhajata/devicetwin.git/internal/utility"
-	"github.com/sukhajata/devicetwin.git/pkg/db"
-	"github.com/sukhajata/devicetwin.git/pkg/loggerhelper"
+	"github.com/sukhajata/devicetwin/internal/types"
+	"github.com/sukhajata/devicetwin/internal/utility"
+	"github.com/sukhajata/devicetwin/pkg/db"
+	"github.com/sukhajata/devicetwin/pkg/loggerhelper"
 	pb "github.com/sukhajata/ppconfig"
 	pbLogger "github.com/sukhajata/pplogger"
 )

@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"powerpilot.visualstudio.com/PowerPilot/_git/configservice.git/dataapi"
-	"github.com/sukhajata/devicetwin.git/mocks"
+	"github.com/sukhajata/devicetwin/mocks"
 	"powerpilot.visualstudio.com/PowerPilot/_git/configservice.git/types"
 	"powerpilot.visualstudio.com/PowerPilot/_git/configservice.git/utility"
 	pb "github.com/sukhajata/ppconfig"

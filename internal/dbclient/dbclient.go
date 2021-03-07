@@ -1,7 +1,7 @@
 package dbclient
 
 import (
-	"github.com/sukhajata/devicetwin.git/internal/types"
+	"github.com/sukhajata/devicetwin/internal/types"
 	pb "github.com/sukhajata/ppconfig"
 )
 

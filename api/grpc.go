@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/sukhajata/devicetwin.git/pkg/authhelper"
-	"github.com/sukhajata/devicetwin.git/pkg/loggerhelper"
+	"github.com/sukhajata/devicetwin/pkg/authhelper"
+	"github.com/sukhajata/devicetwin/pkg/loggerhelper"
 
-	"github.com/sukhajata/devicetwin.git/internal/consistency"
-	"github.com/sukhajata/devicetwin.git/internal/core"
+	"github.com/sukhajata/devicetwin/internal/consistency"
+	"github.com/sukhajata/devicetwin/internal/core"
 	pb "github.com/sukhajata/ppconfig"
 	pbLogger "github.com/sukhajata/pplogger"
 )

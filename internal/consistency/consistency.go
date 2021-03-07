@@ -2,17 +2,17 @@ package consistency
 
 import (
 	"fmt"
-	db2 "github.com/sukhajata/devicetwin.git/internal/dbclient"
-	"github.com/sukhajata/devicetwin.git/internal/dbclient/nosql"
+	db2 "github.com/sukhajata/devicetwin/internal/dbclient"
+	"github.com/sukhajata/devicetwin/internal/dbclient/nosql"
 	"math/rand"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/sukhajata/devicetwin.git/internal/dataapi"
-	"github.com/sukhajata/devicetwin.git/internal/types"
-	"github.com/sukhajata/devicetwin.git/internal/utility"
-	"github.com/sukhajata/devicetwin.git/pkg/loggerhelper"
+	"github.com/sukhajata/devicetwin/internal/dataapi"
+	"github.com/sukhajata/devicetwin/internal/types"
+	"github.com/sukhajata/devicetwin/internal/utility"
+	"github.com/sukhajata/devicetwin/pkg/loggerhelper"
 	pb "github.com/sukhajata/ppconfig"
 	pbLogger "github.com/sukhajata/pplogger"
 	"github.com/sukhajata/ppmessage/ppdownlink"

@@ -1,7 +1,7 @@
 package grpchelper
 
 import (
-	"github.com/sukhajata/devicetwin.git/pkg/errorhelper"
+	"github.com/sukhajata/devicetwin/pkg/errorhelper"
 	"google.golang.org/grpc"
 )
 

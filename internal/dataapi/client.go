@@ -3,7 +3,7 @@ package dataapi
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/sukhajata/devicetwin.git/pkg/loggerhelper"
+	"github.com/sukhajata/devicetwin/pkg/loggerhelper"
 	"net/http"
 )
 

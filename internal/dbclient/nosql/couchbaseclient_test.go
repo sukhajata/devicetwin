@@ -3,13 +3,13 @@ package nosql
 import (
 	"fmt"
 	"github.com/golang/mock/gomock"
-	"github.com/sukhajata/devicetwin.git/internal/types"
-	"github.com/sukhajata/devicetwin.git/internal/utility"
+	"github.com/sukhajata/devicetwin/internal/types"
+	"github.com/sukhajata/devicetwin/internal/utility"
 	pb "github.com/sukhajata/ppconfig"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"github.com/sukhajata/devicetwin.git/mocks"
+	"github.com/sukhajata/devicetwin/mocks"
 )
 
 var (

@@ -1,13 +1,13 @@
 package core
 
 import (
-	"github.com/sukhajata/devicetwin.git/internal/dbclient/nosql"
-	"github.com/sukhajata/devicetwin.git/internal/types"
+	"github.com/sukhajata/devicetwin/internal/dbclient/nosql"
+	"github.com/sukhajata/devicetwin/internal/types"
 	pbLogger "github.com/sukhajata/pplogger"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/sukhajata/devicetwin.git/mocks"
+	"github.com/sukhajata/devicetwin/mocks"
 	pb "github.com/sukhajata/ppconfig"
 	"github.com/sukhajata/ppmessage/ppdownlink"
 	"github.com/sukhajata/ppmessage/ppuplink"

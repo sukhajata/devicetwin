@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/sukhajata/devicetwin.git/internal/types"
-	"github.com/sukhajata/devicetwin.git/pkg/loggerhelper"
+	"github.com/sukhajata/devicetwin/internal/types"
+	"github.com/sukhajata/devicetwin/pkg/loggerhelper"
 	pb "github.com/sukhajata/ppconfig"
 	"github.com/sukhajata/ppmessage/ppdownlink"
 )

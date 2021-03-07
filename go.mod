@@ -1,4 +1,4 @@
-module github.com/sukhajata/devicetwin.git
+module github.com/sukhajata/devicetwin
 
 go 1.15
 

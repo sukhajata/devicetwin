@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/sukhajata/devicetwin.git/pkg/errorhelper"
+	"github.com/sukhajata/devicetwin/pkg/errorhelper"
 	"gopkg.in/couchbase/gocb.v1"
 )
 
