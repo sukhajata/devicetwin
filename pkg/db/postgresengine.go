@@ -43,11 +43,20 @@ func NewTimescaleEngine(psqlURL string) (*PostgresEngine, error) {
 
 }
 
+// FatalError implements error, indicates connection lost, action needs to be taken
+type FatalError struct {
+	message string
+}
+
+func (e *FatalError) Error() string {
+	return e.message
+}
+
 // Query - get array
 func (t *PostgresEngine) Query(queryString string, arguments ...interface{}) ([]interface{}, error) {
 	conn, err := t.pool.Acquire(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, &FatalError{message: err.Error()}
 	}
 
 	defer conn.Release()
@@ -76,7 +85,7 @@ func (t *PostgresEngine) Query(queryString string, arguments ...interface{}) ([]
 func (t *PostgresEngine) QueryConnections(queryString string, arguments ...interface{}) ([]*pb.Connection, error) {
 	conn, err := t.pool.Acquire(context.Background())
 	if err != nil {
-		return nil, err
+		return nil, &FatalError{message: err.Error()}
 	}
 
 	defer conn.Release()
@@ -111,7 +120,7 @@ func (t *PostgresEngine) QueryConnections(queryString string, arguments ...inter
 func (t *PostgresEngine) Exec(queryString string, arguments ...interface{}) error {
 	conn, err := t.pool.Acquire(context.Background())
 	if err != nil {
-		return err
+		return &FatalError{message: err.Error()}
 	}
 
 	defer conn.Release()
@@ -124,7 +133,7 @@ func (t *PostgresEngine) Exec(queryString string, arguments ...interface{}) erro
 func (t *PostgresEngine) ScanRow(queryString string, valuePtr interface{}, arguments ...interface{}) error {
 	conn, err := t.pool.Acquire(context.Background())
 	if err != nil {
-		return err
+		return &FatalError{message: err.Error()}
 	}
 
 	defer conn.Release()
@@ -135,5 +144,10 @@ func (t *PostgresEngine) ScanRow(queryString string, valuePtr interface{}, argum
 
 // Close the pool
 func (t *PostgresEngine) Close() {
-	t.pool.Close()
+	// check pool is open
+	_, err := t.pool.Acquire(context.Background())
+	if err == nil {
+		// no error so close
+		t.pool.Close()
+	}
 }
